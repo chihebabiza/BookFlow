@@ -15,4 +15,12 @@ public class CountryRepository : ICountryRepository
         _context = context;
     }
 
+    public async Task<IEnumerable<Country>> GetAllAsync()
+    {
+        return await _context.Countries
+            .AsNoTracking()
+            .OrderBy(x => x.Id)
+            .ToListAsync();
+    }
+
 }

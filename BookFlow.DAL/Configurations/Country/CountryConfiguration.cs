@@ -23,7 +23,7 @@ public class CountryConfiguration
 
         builder.Property(x => x.Code)
             .IsRequired()
-            .HasMaxLength(10);
+            .HasMaxLength(2);
 
         builder.HasIndex(x => x.Code)
             .IsUnique();
