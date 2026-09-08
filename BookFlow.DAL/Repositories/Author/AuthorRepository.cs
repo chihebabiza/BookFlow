@@ -4,6 +4,7 @@ using BookFlow.Core.Entities;
 using BookFlow.DAL.Context;
 using Microsoft.EntityFrameworkCore;
 using BookFlow.Core.Enums;
+using BookFlow.Core.DTOs;
 
 namespace BookFlow.DAL.Repositories;
 
@@ -16,30 +17,47 @@ public class AuthorRepository : IAuthorRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Author>> GetAllAsync()
+    public async Task<IEnumerable<AuthorResponseDto>> GetAllAsync()
     {
         return await _context.Authors
             .AsNoTracking()
+            .Select(x => new AuthorResponseDto
+            {
+                Id = x.Id,
+                FirstName = x.FirstName,
+                LastName = x.LastName,
+                CountryName = x.Country.Name,
+                CreatedAt = x.CreatedAt
+            })
             .OrderBy(x => x.Id)
             .ToListAsync();
     }
 
-    public async Task<int> CreateAsync(Author author)
+    public async Task<int> CreateAsync(AuthorCreateDto author)
     {
-        _context.Authors.Add(author);
+        var newAuthor = new Author
+        {
+            FirstName = author.FirstName,
+            LastName = author.LastName,
+            CountryId = author.CountryId,
+            CreatedAt = DateTime.UtcNow
+        };
+        _context.Authors.Add(newAuthor);
         await _context.SaveChangesAsync();
-        return author.Id;
+        return newAuthor.Id;
     }
 
-    public async Task<bool> IsExistsAsync(int id)
+    public async Task<bool> UpdateAsync(AuthorUpdateDto author, int id)
     {
-        return await _context.Authors
-            .AnyAsync(x => x.Id == id);
-    }
+        var existingAuthor = await _context.Authors.FindAsync(id);
+        if (existingAuthor == null)
+            return false;
 
-    public async Task<bool> UpdateAsync(Author author)
-    {
-        _context.Authors.Update(author);
+        existingAuthor.FirstName = author.FirstName;
+        existingAuthor.LastName = author.LastName;
+        existingAuthor.CountryId = author.CountryId;
+
+        _context.Authors.Update(existingAuthor);
         var affectedRows = await _context.SaveChangesAsync();
         return affectedRows > 0;
     }
@@ -60,6 +78,12 @@ public class AuthorRepository : IAuthorRepository
         {
             return DeleteResult.SqlProblem;
         }
+    }
+
+    public async Task<bool> IsExistsAsync(int id)
+    {
+        return await _context.Authors
+            .AnyAsync(x => x.Id == id);
     }
 
 }

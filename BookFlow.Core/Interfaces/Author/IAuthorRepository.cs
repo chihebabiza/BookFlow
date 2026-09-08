@@ -1,17 +1,16 @@
-using BookFlow.Core.Entities;
 using BookFlow.Core.Enums;
-
+using BookFlow.Core.DTOs;
 namespace BookFlow.Core.Interfaces;
 
 public interface IAuthorRepository
 {
-    Task<IEnumerable<Author>> GetAllAsync();
+    Task<IEnumerable<AuthorResponseDto>> GetAllAsync();
 
-    Task<int> CreateAsync(Author author);
+    Task<int> CreateAsync(AuthorCreateDto author);
 
-    Task<bool> IsExistsAsync(int id);
-
-    Task<bool> UpdateAsync(Author author);
+    Task<bool> UpdateAsync(AuthorUpdateDto author, int id);
 
     Task<DeleteResult> DeleteAsync(int id);
+
+    Task<bool> IsExistsAsync(int id);
 }
