@@ -69,4 +69,16 @@ public class BookRepository : IBookRepository
         }
     }
 
+    public async Task<bool> IsExistsAsync(int id)
+    {
+        return await _context.Books
+            .AnyAsync(x => x.Id == id);
+    }
+
+    public async Task<bool> IsExistByIsbnAsync(string isbn)
+    {
+        return await _context.Books
+            .AnyAsync(x => x.ISBN == isbn);
+    }
+
 }

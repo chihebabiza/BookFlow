@@ -16,4 +16,8 @@ public interface IBookRepository
     Task<bool> UpdateAsync(Book book);
 
     Task<DeleteResult> DeleteAsync(int id);
+
+    Task<bool> IsExistsAsync(int id);
+
+    Task<bool> IsExistByIsbnAsync(string isbn);
 }
