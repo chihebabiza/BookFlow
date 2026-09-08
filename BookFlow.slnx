@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="BookFlow.Api/BookFlow.Api.csproj" />
+  <Project Path="BookFlow.BLL/BookFlow.BLL.csproj" />
+  <Project Path="BookFlow.Core/BookFlow.Core.csproj" />
+  <Project Path="BookFlow.DAL/BookFlow.DAL.csproj" />
+</Solution>
