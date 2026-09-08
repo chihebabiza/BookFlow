@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using BookFlow.Core.Entities;
+using BookFlow.DAL.Seed;
 namespace BookFlow.DAL.Context;
 
 public class AppDbContext : DbContext
@@ -23,5 +24,7 @@ public class AppDbContext : DbContext
 
         modelBuilder.ApplyConfigurationsFromAssembly(
             typeof(AppDbContext).Assembly);
+
+        CountrySeeder.Seed(modelBuilder);
     }
 }
