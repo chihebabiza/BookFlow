@@ -16,5 +16,21 @@ public class AuthorConfiguration
 
         builder.Property(x => x.Id)
             .ValueGeneratedOnAdd();
+
+        builder.Property(x => x.FirstName)
+            .IsRequired()
+            .HasMaxLength(100);
+
+        builder.Property(x => x.LastName)
+            .IsRequired()
+            .HasMaxLength(100);
+
+        // Relationships
+        builder.HasOne(x => x.Country)
+            .WithMany(x => x.Authors)
+            .HasForeignKey(x => x.CountryId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
+
     }
 }

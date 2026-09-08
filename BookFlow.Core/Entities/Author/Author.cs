@@ -12,5 +12,7 @@ public class Author
 
     public Country Country { get; set; } = null!;
 
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
     public ICollection<Book> Books { get; set; } = new List<Book>();
 }

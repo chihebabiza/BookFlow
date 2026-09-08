@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-
+using BookFlow.Core.Entities;
 namespace BookFlow.DAL.Context;
 
 public class AppDbContext : DbContext
@@ -9,6 +9,12 @@ public class AppDbContext : DbContext
         : base(options)
     {
     }
+
+    public DbSet<Category> Categories => Set<Category>();
+    public DbSet<Author> Authors => Set<Author>();
+    public DbSet<Book> Books => Set<Book>();
+    public DbSet<BookCopy> BookCopies => Set<BookCopy>();
+    public DbSet<Country> Countries => Set<Country>();
 
     protected override void OnModelCreating(
         ModelBuilder modelBuilder)

@@ -16,5 +16,19 @@ public class CountryConfiguration
 
         builder.Property(x => x.Id)
             .ValueGeneratedOnAdd();
+
+        builder.Property(x => x.Name)
+            .IsRequired()
+            .HasMaxLength(100);
+
+        builder.Property(x => x.Code)
+            .IsRequired()
+            .HasMaxLength(10);
+
+        builder.HasIndex(x => x.Code)
+            .IsUnique();
+
+        builder.HasIndex(x => x.Name)
+            .IsUnique();
     }
 }

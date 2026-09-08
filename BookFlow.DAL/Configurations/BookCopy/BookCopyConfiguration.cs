@@ -16,5 +16,15 @@ public class BookCopyConfiguration
 
         builder.Property(x => x.Id)
             .ValueGeneratedOnAdd();
+
+        builder.HasIndex(x => x.CopyNumber)
+            .IsUnique();
+
+        // Relationships
+        builder.HasOne(x => x.Book)
+            .WithMany(b => b.Copies)
+            .HasForeignKey(x => x.BookId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

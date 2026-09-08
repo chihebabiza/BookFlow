@@ -8,5 +8,7 @@ public class Category
 
     public string? Description { get; set; }
 
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
     public ICollection<Book> Books { get; set; } = new List<Book>();
 }
