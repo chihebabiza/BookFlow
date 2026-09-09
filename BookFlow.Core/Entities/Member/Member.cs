@@ -13,4 +13,8 @@ public class Member
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public bool IsActive { get; set; } = true;
+
+    // Navigation properties
+    public ICollection<BookCopy> BookCopies { get; set; } = new List<BookCopy>();
+    public ICollection<Loan> Loans { get; set; } = new List<Loan>();
 }

@@ -4,6 +4,7 @@ using BookFlow.DAL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookFlow.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260909164644_AddMember")]
+    partial class AddMember
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -113,9 +116,6 @@ namespace BookFlow.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("MemberId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -125,8 +125,6 @@ namespace BookFlow.DAL.Migrations
 
                     b.HasIndex("CopyNumber")
                         .IsUnique();
-
-                    b.HasIndex("MemberId");
 
                     b.ToTable("BookCopies", (string)null);
                 });
@@ -1680,41 +1678,6 @@ namespace BookFlow.DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("BookFlow.Core.Entities.Loan", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BookCopyId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("BorrowedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DueDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("MemberId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ReturnedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookCopyId");
-
-                    b.HasIndex("MemberId");
-
-                    b.ToTable("Loans", (string)null);
-                });
-
             modelBuilder.Entity("BookFlow.Core.Entities.Member", b =>
                 {
                     b.Property<int>("Id")
@@ -1790,30 +1753,7 @@ namespace BookFlow.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BookFlow.Core.Entities.Member", null)
-                        .WithMany("BookCopies")
-                        .HasForeignKey("MemberId");
-
                     b.Navigation("Book");
-                });
-
-            modelBuilder.Entity("BookFlow.Core.Entities.Loan", b =>
-                {
-                    b.HasOne("BookFlow.Core.Entities.BookCopy", "BookCopy")
-                        .WithMany("Loans")
-                        .HasForeignKey("BookCopyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("BookFlow.Core.Entities.Member", "Member")
-                        .WithMany("Loans")
-                        .HasForeignKey("MemberId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("BookCopy");
-
-                    b.Navigation("Member");
                 });
 
             modelBuilder.Entity("BookFlow.Core.Entities.Author", b =>
@@ -1826,11 +1766,6 @@ namespace BookFlow.DAL.Migrations
                     b.Navigation("Copies");
                 });
 
-            modelBuilder.Entity("BookFlow.Core.Entities.BookCopy", b =>
-                {
-                    b.Navigation("Loans");
-                });
-
             modelBuilder.Entity("BookFlow.Core.Entities.Category", b =>
                 {
                     b.Navigation("Books");
@@ -1839,13 +1774,6 @@ namespace BookFlow.DAL.Migrations
             modelBuilder.Entity("BookFlow.Core.Entities.Country", b =>
                 {
                     b.Navigation("Authors");
-                });
-
-            modelBuilder.Entity("BookFlow.Core.Entities.Member", b =>
-                {
-                    b.Navigation("BookCopies");
-
-                    b.Navigation("Loans");
                 });
 #pragma warning restore 612, 618
         }

@@ -15,5 +15,5 @@ public class BookCopy
 
     public DateTime AcquiredDate { get; set; }
 
-    //public ICollection<Loan> Loans { get; set; } = new List<Loan>();
+    public ICollection<Loan> Loans { get; set; } = new List<Loan>();
 }

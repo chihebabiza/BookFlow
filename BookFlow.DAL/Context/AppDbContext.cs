@@ -17,6 +17,7 @@ public class AppDbContext : DbContext
     public DbSet<BookCopy> BookCopies => Set<BookCopy>();
     public DbSet<Country> Countries => Set<Country>();
     public DbSet<Member> Members => Set<Member>();
+    public DbSet<Loan> Loans => Set<Loan>();
 
     protected override void OnModelCreating(
         ModelBuilder modelBuilder)
