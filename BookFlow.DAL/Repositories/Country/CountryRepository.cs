@@ -1,7 +1,9 @@
 using BookFlow.Core.DTOs;
+using BookFlow.Core.Entities;
 using BookFlow.Core.Interfaces;
 using BookFlow.DAL.Context;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace BookFlow.DAL.Repositories;
 
@@ -18,12 +20,7 @@ public class CountryRepository : ICountryRepository
     {
         return await _context.Countries
             .AsNoTracking()
-            .Select(x => new CountryResponseDto
-            {
-                Id = x.Id,
-                Name = x.Name,
-                Code = x.Code
-            })
+            .Select(CountryResponseProjection)
             .OrderBy(x => x.Id)
             .ToListAsync();
     }
@@ -33,5 +30,13 @@ public class CountryRepository : ICountryRepository
         return await _context.Countries
             .AnyAsync(x => x.Id == id);
     }
+
+    private static readonly Expression<Func<Country, CountryResponseDto>> CountryResponseProjection =
+    x => new CountryResponseDto
+    {
+        Id = x.Id,
+        Name = x.Name,
+        Code = x.Code
+    };
 
 }

@@ -1,4 +1,5 @@
 using BookFlow.BLL.Exceptions;
+using BookFlow.BLL.Helpers;
 using BookFlow.Core.DTOs;
 using BookFlow.Core.Entities;
 using BookFlow.Core.Enums;
@@ -26,7 +27,7 @@ public class AuthorService : IAuthorService
 
     public async Task<AuthorResponseDto> GetByIdAsync(int id)
     {
-        ValidateId(id);
+        ValidationHelper.ValidateId(id);
 
         var author = await _repository.GetByIdAsync(id);
 
@@ -58,7 +59,7 @@ public class AuthorService : IAuthorService
 
     public async Task<bool> UpdateAsync(AuthorUpdateDto dto, int id)
     {
-        ValidateId(id);
+        ValidationHelper.ValidateId(id);
 
         // Check if author exists
         var author = await _repository.GetByIdForUpdateAsync(id);
@@ -84,7 +85,7 @@ public class AuthorService : IAuthorService
 
     public async Task<bool> DeleteAsync(int id)
     {
-        ValidateId(id);
+        ValidationHelper.ValidateId(id);
 
         var exists = await _repository.IsExistsAsync(id);
 
@@ -107,12 +108,5 @@ public class AuthorService : IAuthorService
             _ => throw new Exception(
                 "An unexpected error occurred while deleting the author")
         };
-    }
-
-    private static void ValidateId(int id)
-    {
-        if (id <= 0)
-            throw new BadRequestException(
-                "The identifier must be greater than zero");
     }
 }

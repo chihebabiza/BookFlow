@@ -1,9 +1,11 @@
-using Microsoft.Data.SqlClient;
-using BookFlow.Core.Interfaces;
+using BookFlow.Core.DTOs;
 using BookFlow.Core.Entities;
-using BookFlow.DAL.Context;
 using BookFlow.Core.Enums;
+using BookFlow.Core.Interfaces;
+using BookFlow.DAL.Context;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace BookFlow.DAL.Repositories;
 
@@ -16,11 +18,12 @@ public class CategoryRepository : ICategoryRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Category>> GetAllAsync()
+    public async Task<IEnumerable<CategoryResponseDto>> GetAllAsync()
     {
         return await _context.Categories
             .AsNoTracking()
             .OrderBy(x => x.Id)
+            .Select(CategoryResponseProjection)
             .ToListAsync();
     }
 
@@ -61,5 +64,13 @@ public class CategoryRepository : ICategoryRepository
         return await _context.Categories
             .AnyAsync(x => x.Name == name);
     }
+
+    private static readonly Expression<Func<Category, CategoryResponseDto>> CategoryResponseProjection =
+    x => new CategoryResponseDto
+    {
+        Id = x.Id,
+        Name = x.Name,
+        CreatedAt = x.CreatedAt
+    };
 
 }

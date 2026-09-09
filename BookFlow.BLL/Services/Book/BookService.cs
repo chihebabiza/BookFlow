@@ -3,6 +3,7 @@ using BookFlow.Core.DTOs;
 using BookFlow.Core.Entities;
 using BookFlow.Core.Enums;
 using BookFlow.Core.Interfaces;
+using BookFlow.BLL.Helpers;
 
 namespace BookFlow.BLL.Services;
 
@@ -29,7 +30,7 @@ public class BookService : IBookService
 
     public async Task<BookResponseDto> GetByIdAsync(int id)
     {
-        ValidateId(id);
+        ValidationHelper.ValidateId(id);
 
         var book = await _repository.GetByIdAsync(id);
 
@@ -75,7 +76,7 @@ public class BookService : IBookService
 
     public async Task<bool> UpdateAsync(BookUpdateDto dto, int id)
     {
-        ValidateId(id);
+        ValidationHelper.ValidateId(id);
 
         var book = await _repository.GetByIdForUpdateAsync(id);
 
@@ -112,7 +113,7 @@ public class BookService : IBookService
 
     public async Task<bool> DeleteAsync(int id)
     {
-        ValidateId(id);
+        ValidationHelper.ValidateId(id);
 
         var exists = await _repository.IsExistsAsync(id);
 
@@ -135,12 +136,5 @@ public class BookService : IBookService
             _ => throw new Exception(
                 "An unexpected error occurred while deleting the book")
         };
-    }
-
-    private static void ValidateId(int id)
-    {
-        if (id <= 0)
-            throw new BadRequestException(
-                "The identifier must be greater than zero");
     }
 }
