@@ -1,6 +1,6 @@
-using BookFlow.Core.Interfaces;
-using Microsoft.Data.SqlClient;
+using BookFlow.Core.DTOs;
 using BookFlow.Core.Entities;
+using BookFlow.Core.Interfaces;
 using BookFlow.DAL.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,10 +15,16 @@ public class CountryRepository : ICountryRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Country>> GetAllAsync()
+    public async Task<IEnumerable<CountryResponseDto>> GetAllAsync()
     {
         return await _context.Countries
             .AsNoTracking()
+            .Select(x => new CountryResponseDto
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Code = x.Code
+            })
             .OrderBy(x => x.Id)
             .ToListAsync();
     }

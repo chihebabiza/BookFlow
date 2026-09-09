@@ -16,4 +16,13 @@ public class CountryController : ControllerBase
         _service = service;
     }
 
+    // GET: api/Authors
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<CountryResponseDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<IEnumerable<CountryResponseDto>>> GetAll()
+    {
+        var countries = await _service.GetAllAsync();
+        return Ok(countries);
+    }
 }

@@ -3,5 +3,5 @@ namespace BookFlow.Core.Interfaces;
 
 public interface ICountryService
 {
-
+    Task<IEnumerable<CountryResponseDto>> GetAllAsync();
 }

@@ -1,6 +1,5 @@
 using BookFlow.Core.Interfaces;
 using BookFlow.Core.DTOs;
-using BookFlow.BLL.Exceptions;
 
 namespace BookFlow.BLL.Services;
 
@@ -14,4 +13,8 @@ public class CountryService : ICountryService
         _repository = repository;
     }
 
+    public async Task<IEnumerable<CountryResponseDto>> GetAllAsync()
+    {
+        return await _repository.GetAllAsync();
+    }
 }

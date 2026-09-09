@@ -1,8 +1,8 @@
-using BookFlow.Core.Entities;
+using BookFlow.Core.DTOs;
 
 namespace BookFlow.Core.Interfaces;
 
 public interface ICountryRepository
 {
-    Task<IEnumerable<Country>> GetAllAsync();
+    Task<IEnumerable<CountryResponseDto>> GetAllAsync();
 }
