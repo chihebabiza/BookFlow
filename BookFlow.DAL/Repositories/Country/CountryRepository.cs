@@ -29,4 +29,10 @@ public class CountryRepository : ICountryRepository
             .ToListAsync();
     }
 
+    public async Task<bool> isExistAsync(int id)
+    {
+        return await _context.Countries
+            .AnyAsync(x => x.Id == id);
+    }
+
 }

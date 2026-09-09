@@ -58,31 +58,16 @@ public class AuthorRepository : IAuthorRepository
         return author;
     }
 
-    public async Task<int> CreateAsync(AuthorCreateDto author)
+    public async Task<int> CreateAsync(Author author)
     {
-        var newAuthor = new Author
-        {
-            FirstName = author.FirstName,
-            LastName = author.LastName,
-            CountryId = author.CountryId,
-            CreatedAt = DateTime.UtcNow
-        };
-        _context.Authors.Add(newAuthor);
+        _context.Authors.Add(author);
         await _context.SaveChangesAsync();
-        return newAuthor.Id;
+        return author.Id;
     }
 
-    public async Task<bool> UpdateAsync(AuthorUpdateDto author, int id)
+    public async Task<bool> UpdateAsync(Author author)
     {
-        var existingAuthor = await _context.Authors.FindAsync(id);
-        if (existingAuthor == null)
-            return false;
-
-        existingAuthor.FirstName = author.FirstName;
-        existingAuthor.LastName = author.LastName;
-        existingAuthor.CountryId = author.CountryId;
-
-        _context.Authors.Update(existingAuthor);
+        _context.Authors.Update(author);
         var affectedRows = await _context.SaveChangesAsync();
         return affectedRows > 0;
     }

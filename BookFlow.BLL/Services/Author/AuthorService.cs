@@ -2,17 +2,22 @@ using BookFlow.BLL.Exceptions;
 using BookFlow.Core.DTOs;
 using BookFlow.Core.Enums;
 using BookFlow.Core.Interfaces;
+using BookFlow.Core.Entities;
 
 namespace BookFlow.BLL.Services;
 
 public class AuthorService : IAuthorService
 {
     private readonly IAuthorRepository _repository;
+    private readonly ICountryRepository _countryRepository;
 
     public AuthorService(
-        IAuthorRepository repository)
+        IAuthorRepository repository,
+        ICountryRepository countryRepository
+        )
     {
         _repository = repository;
+        _countryRepository = countryRepository;
     }
 
     public async Task<IEnumerable<AuthorResponseDto>> GetAllAsync()
@@ -30,21 +35,32 @@ public class AuthorService : IAuthorService
         return author;
     }
 
-    public async Task<int> CreateAsync(AuthorCreateDto author)
+    public async Task<int> CreateAsync(AuthorCreateDto dto)
     {
+        var countryExists = await _countryRepository.isExistAsync(dto.CountryId);
+        if (!countryExists)
+            throw new NotFoundException($"The country with the identifier {dto.CountryId} does not exist");
+
+        var author = new Author
+        {
+            FirstName = dto.FirstName,
+            LastName = dto.LastName,
+            CountryId = dto.CountryId,
+            CreatedAt = DateTime.UtcNow
+        };
         return await _repository.CreateAsync(author);
     }
 
-    public async Task<bool> UpdateAsync(AuthorUpdateDto author, int id)
+    public async Task<bool> UpdateAsync(AuthorUpdateDto dto, int id)
     {
         if(id <= 0)
             throw new BadRequestException("The identifier must be greater than zero");
 
-        var existingAuthor = await _repository.GetByIdForUpdateAsync(id);
-        if (existingAuthor is null)
+        var author = await _repository.GetByIdForUpdateAsync(id);
+        if (author is null)
             throw new NotFoundException($"The author with the identifier {id} does not exist");
 
-        return await _repository.UpdateAsync(author, id);
+        return await _repository.UpdateAsync(author);
     }
 
     public async Task<bool> DeleteAsync(int id)
