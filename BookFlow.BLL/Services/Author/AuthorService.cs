@@ -1,8 +1,8 @@
 using BookFlow.BLL.Exceptions;
 using BookFlow.Core.DTOs;
+using BookFlow.Core.Entities;
 using BookFlow.Core.Enums;
 using BookFlow.Core.Interfaces;
-using BookFlow.Core.Entities;
 
 namespace BookFlow.BLL.Services;
 
@@ -13,8 +13,7 @@ public class AuthorService : IAuthorService
 
     public AuthorService(
         IAuthorRepository repository,
-        ICountryRepository countryRepository
-        )
+        ICountryRepository countryRepository)
     {
         _repository = repository;
         _countryRepository = countryRepository;
@@ -27,19 +26,24 @@ public class AuthorService : IAuthorService
 
     public async Task<AuthorResponseDto> GetByIdAsync(int id)
     {
-        if (id <= 0)
-            throw new BadRequestException("The identifier must be greater than zero");
+        ValidateId(id);
+
         var author = await _repository.GetByIdAsync(id);
+
         if (author is null)
-            throw new NotFoundException($"The author with the identifier {id} does not exist");
+            throw new NotFoundException(
+                $"The author with the identifier {id} does not exist");
+
         return author;
     }
 
     public async Task<int> CreateAsync(AuthorCreateDto dto)
     {
-        var countryExists = await _countryRepository.isExistAsync(dto.CountryId);
+        var countryExists = await _countryRepository.IsExistsAsync(dto.CountryId);
+
         if (!countryExists)
-            throw new NotFoundException($"The country with the identifier {dto.CountryId} does not exist");
+            throw new NotFoundException(
+                $"The country with the identifier {dto.CountryId} does not exist");
 
         var author = new Author
         {
@@ -48,31 +52,48 @@ public class AuthorService : IAuthorService
             CountryId = dto.CountryId,
             CreatedAt = DateTime.UtcNow
         };
+
         return await _repository.CreateAsync(author);
     }
 
     public async Task<bool> UpdateAsync(AuthorUpdateDto dto, int id)
     {
-        if(id <= 0)
-            throw new BadRequestException("The identifier must be greater than zero");
+        ValidateId(id);
 
+        // Check if author exists
         var author = await _repository.GetByIdForUpdateAsync(id);
+
         if (author is null)
-            throw new NotFoundException($"The author with the identifier {id} does not exist");
+            throw new NotFoundException(
+                $"The author with the identifier {id} does not exist");
+
+        // Check if country exists
+        var countryExists = await _countryRepository.IsExistsAsync(dto.CountryId);
+
+        if (!countryExists)
+            throw new NotFoundException(
+                $"The country with the identifier {dto.CountryId} does not exist");
+
+        // Update entity
+        author.FirstName = dto.FirstName;
+        author.LastName = dto.LastName;
+        author.CountryId = dto.CountryId;
 
         return await _repository.UpdateAsync(author);
     }
 
     public async Task<bool> DeleteAsync(int id)
     {
-        if(id <= 0)
-            throw new BadRequestException("The identifier must be greater than zero");
+        ValidateId(id);
 
-        var exist = await _repository.IsExistsAsync(id);
-        if (!exist)
-            throw new NotFoundException($"The author with the identifier {id} does not exist");
+        var exists = await _repository.IsExistsAsync(id);
+
+        if (!exists)
+            throw new NotFoundException(
+                $"The author with the identifier {id} does not exist");
 
         var result = await _repository.DeleteAsync(id);
+
         return result switch
         {
             DeleteResult.Success => true,
@@ -86,5 +107,12 @@ public class AuthorService : IAuthorService
             _ => throw new Exception(
                 "An unexpected error occurred while deleting the author")
         };
+    }
+
+    private static void ValidateId(int id)
+    {
+        if (id <= 0)
+            throw new BadRequestException(
+                "The identifier must be greater than zero");
     }
 }

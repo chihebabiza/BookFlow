@@ -1,5 +1,4 @@
 using BookFlow.Core.DTOs;
-using BookFlow.Core.Entities;
 using BookFlow.Core.Interfaces;
 using BookFlow.DAL.Context;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +28,7 @@ public class CountryRepository : ICountryRepository
             .ToListAsync();
     }
 
-    public async Task<bool> isExistAsync(int id)
+    public async Task<bool> IsExistsAsync(int id)
     {
         return await _context.Countries
             .AnyAsync(x => x.Id == id);

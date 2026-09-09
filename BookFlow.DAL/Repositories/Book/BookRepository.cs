@@ -1,9 +1,11 @@
-using BookFlow.Core.Interfaces;
-using Microsoft.Data.SqlClient;
+using BookFlow.Core.DTOs;
 using BookFlow.Core.Entities;
-using BookFlow.DAL.Context;
-using Microsoft.EntityFrameworkCore;
 using BookFlow.Core.Enums;
+using BookFlow.Core.Interfaces;
+using BookFlow.DAL.Context;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace BookFlow.DAL.Repositories;
 
@@ -16,18 +18,25 @@ public class BookRepository : IBookRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Book>> GetAllAsync()
+    public async Task<IEnumerable<BookResponseDto>> GetAllAsync()
     {
         return await _context.Books
             .AsNoTracking()
+            .Select(BookResponseProjection)
             .OrderBy(x => x.Id)
             .ToListAsync();
     }
 
-    public async Task<Book?> GetByIdAsync(int id)
+    public async Task<BookResponseDto?> GetByIdAsync(int id)
     {
         return await _context.Books
             .AsNoTracking()
+            .Select(BookResponseProjection)
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
+    public async Task<Book?> GetByIdForUpdateAsync(int id)
+    {
+        return await _context.Books
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
@@ -36,12 +45,6 @@ public class BookRepository : IBookRepository
         _context.Books.Add(book);
         await _context.SaveChangesAsync();
         return book.Id;
-    }
-
-    public async Task<Book?> GetByIdForUpdateAsync(int id)
-    {
-        return await _context.Books
-            .FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task<bool> UpdateAsync(Book book)
@@ -80,5 +83,16 @@ public class BookRepository : IBookRepository
         return await _context.Books
             .AnyAsync(x => x.ISBN == isbn);
     }
+    private static readonly Expression<Func<Book, BookResponseDto>> BookResponseProjection =
+    x => new BookResponseDto
+    {
+        Id = x.Id,
+        Title = x.Title,
+        ISBN = x.ISBN,
+        AuthorName = x.Author.FirstName + " " + x.Author.LastName,
+        CategoryName = x.Category.Name,
+        PublishedDate = x.PublishedDate,
+        CreatedAt = x.CreatedAt
+    };
 
 }

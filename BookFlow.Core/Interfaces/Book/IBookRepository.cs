@@ -1,3 +1,4 @@
+using BookFlow.Core.DTOs;
 using BookFlow.Core.Entities;
 using BookFlow.Core.Enums;
 
@@ -5,13 +6,13 @@ namespace BookFlow.Core.Interfaces;
 
 public interface IBookRepository
 {
-    Task<IEnumerable<Book>> GetAllAsync();
+    Task<IEnumerable<BookResponseDto>> GetAllAsync();
 
-    Task<Book?> GetByIdAsync(int id);
-
-    Task<int> CreateAsync(Book book);
+    Task<BookResponseDto?> GetByIdAsync(int id);
 
     Task<Book?> GetByIdForUpdateAsync(int id);
+
+    Task<int> CreateAsync(Book book);
 
     Task<bool> UpdateAsync(Book book);
 

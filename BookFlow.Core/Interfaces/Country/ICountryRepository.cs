@@ -6,5 +6,5 @@ public interface ICountryRepository
 {
     Task<IEnumerable<CountryResponseDto>> GetAllAsync();
 
-    Task<bool> isExistAsync(int id);
+    Task<bool> IsExistsAsync(int id);
 }

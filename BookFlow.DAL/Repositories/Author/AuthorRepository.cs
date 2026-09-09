@@ -1,10 +1,11 @@
-using BookFlow.Core.Interfaces;
-using Microsoft.Data.SqlClient;
-using BookFlow.Core.Entities;
-using BookFlow.DAL.Context;
-using Microsoft.EntityFrameworkCore;
-using BookFlow.Core.Enums;
 using BookFlow.Core.DTOs;
+using BookFlow.Core.Entities;
+using BookFlow.Core.Enums;
+using BookFlow.Core.Interfaces;
+using BookFlow.DAL.Context;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace BookFlow.DAL.Repositories;
 
@@ -21,14 +22,7 @@ public class AuthorRepository : IAuthorRepository
     {
         return await _context.Authors
             .AsNoTracking()
-            .Select(x => new AuthorResponseDto
-            {
-                Id = x.Id,
-                FirstName = x.FirstName,
-                LastName = x.LastName,
-                CountryName = x.Country.Name,
-                CreatedAt = x.CreatedAt
-            })
+            .Select(AuthorResponseProjection)
             .OrderBy(x => x.Id)
             .ToListAsync();
     }
@@ -38,14 +32,7 @@ public class AuthorRepository : IAuthorRepository
         var author = await _context.Authors
             .AsNoTracking()
             .Where(x => x.Id == id)
-            .Select(x => new AuthorResponseDto
-            {
-                Id = x.Id,
-                FirstName = x.FirstName,
-                LastName = x.LastName,
-                CountryName = x.Country.Name,
-                CreatedAt = x.CreatedAt
-            })
+            .Select(AuthorResponseProjection)
             .FirstOrDefaultAsync();
         return author;
     }
@@ -95,5 +82,15 @@ public class AuthorRepository : IAuthorRepository
         return await _context.Authors
             .AnyAsync(x => x.Id == id);
     }
+
+    private static readonly Expression<Func<Author, AuthorResponseDto>> AuthorResponseProjection =
+    x => new AuthorResponseDto
+    {
+        Id = x.Id,
+        FirstName = x.FirstName,
+        LastName = x.LastName,
+        CountryName = x.Country.Name,
+        CreatedAt = x.CreatedAt
+    };
 
 }
