@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using BookFlow.DAL.Context;
 using BookFlow.API.Middleware;
+using BookFlow.Core.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,9 @@ builder.Services.AddCors(options =>
 });
 
 // Dependency Injection
+// Author
+builder.Services.AddScoped<IAuthorRepository, IAuthorRepository>();
+builder.Services.AddScoped<IAuthorService, IAuthorService>();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
