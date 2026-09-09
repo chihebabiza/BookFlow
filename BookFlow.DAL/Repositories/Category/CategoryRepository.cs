@@ -27,12 +27,35 @@ public class CategoryRepository : ICategoryRepository
             .ToListAsync();
     }
 
+    public async Task<CategoryResponseDto?> GetByIdAsync(int id)
+    {
+        return await _context.Categories
+            .AsNoTracking()
+            .Where(x => x.Id == id)
+            .Select(CategoryResponseProjection)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<Category?> GetByIdForUpdateAsync(int id)
+    {
+        return await _context.Categories
+            .Where(x => x.Id == id)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<int> CreateAsync(Category category)
     {
         _context.Categories.Add(category);
         await _context.SaveChangesAsync();
 
         return category.Id;
+    }
+
+    public async Task<bool> UpdateAsync(Category category)
+    {
+        _context.Categories.Update(category);
+        var affectedRows = await _context.SaveChangesAsync();
+        return affectedRows > 0;
     }
 
     public async Task<DeleteResult> DeleteAsync(int id)

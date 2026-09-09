@@ -8,6 +8,12 @@ public interface ICategoryRepository
 {
     Task<IEnumerable<CategoryResponseDto>> GetAllAsync();
 
+    Task<CategoryResponseDto?> GetByIdAsync(int id);
+
+    Task<Category?> GetByIdForUpdateAsync(int id);
+
+    Task<bool> UpdateAsync(Category category);
+
     Task<int> CreateAsync(Category category);
 
     Task<DeleteResult> DeleteAsync(int id);
