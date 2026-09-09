@@ -33,6 +33,31 @@ public class AuthorRepository : IAuthorRepository
             .ToListAsync();
     }
 
+    public async Task<AuthorResponseDto?> GetByIdAsync(int id)
+    {
+        var author = await _context.Authors
+            .AsNoTracking()
+            .Where(x => x.Id == id)
+            .Select(x => new AuthorResponseDto
+            {
+                Id = x.Id,
+                FirstName = x.FirstName,
+                LastName = x.LastName,
+                CountryName = x.Country.Name,
+                CreatedAt = x.CreatedAt
+            })
+            .FirstOrDefaultAsync();
+        return author;
+    }
+
+    public async Task<Author?> GetByIdForUpdateAsync(int id)
+    {
+        var author = await _context.Authors
+            .Where(x => x.Id == id)
+            .FirstOrDefaultAsync();
+        return author;
+    }
+
     public async Task<int> CreateAsync(AuthorCreateDto author)
     {
         var newAuthor = new Author

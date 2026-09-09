@@ -20,6 +20,16 @@ public class AuthorService : IAuthorService
         return await _repository.GetAllAsync();
     }
 
+    public async Task<AuthorResponseDto> GetByIdAsync(int id)
+    {
+        if (id <= 0)
+            throw new BadRequestException("The identifier must be greater than zero");
+        var author = await _repository.GetByIdAsync(id);
+        if (author is null)
+            throw new NotFoundException($"The author with the identifier {id} does not exist");
+        return author;
+    }
+
     public async Task<int> CreateAsync(AuthorCreateDto author)
     {
         return await _repository.CreateAsync(author);
@@ -27,8 +37,11 @@ public class AuthorService : IAuthorService
 
     public async Task<bool> UpdateAsync(AuthorUpdateDto author, int id)
     {
-        var exist = await _repository.IsExistsAsync(id);
-        if (!exist)
+        if(id <= 0)
+            throw new BadRequestException("The identifier must be greater than zero");
+
+        var existingAuthor = await _repository.GetByIdForUpdateAsync(id);
+        if (existingAuthor is null)
             throw new NotFoundException($"The author with the identifier {id} does not exist");
 
         return await _repository.UpdateAsync(author, id);
@@ -36,6 +49,9 @@ public class AuthorService : IAuthorService
 
     public async Task<bool> DeleteAsync(int id)
     {
+        if(id <= 0)
+            throw new BadRequestException("The identifier must be greater than zero");
+
         var exist = await _repository.IsExistsAsync(id);
         if (!exist)
             throw new NotFoundException($"The author with the identifier {id} does not exist");
