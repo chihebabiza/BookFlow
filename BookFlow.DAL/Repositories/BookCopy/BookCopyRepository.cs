@@ -30,6 +30,12 @@ public class BookCopyRepository : IBookCopyRepository
             .ToListAsync();
     }
 
+    public async Task<bool> IsExistsAsync(int id)
+    {
+        return await _context.BookCopies
+            .AnyAsync(x => x.Id == id);
+    }
+
     private static readonly Expression<Func<BookCopy, BookCopyResponseDto>> BookCopyResponseProjection =
     x => new BookCopyResponseDto
     {

@@ -9,4 +9,6 @@ public interface IBookCopyRepository
 
     Task<IEnumerable<BookCopyResponseDto>> GetCopyNumbersAsync(int bookId);
 
+    Task<bool> IsExistsAsync(int id);
+
 }

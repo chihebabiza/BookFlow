@@ -10,12 +10,17 @@ namespace BookFlow.BLL.Services;
 public class LoanService : ILoanService
 {
     private readonly ILoanRepository _repository;
-
+    private readonly IBookCopyRepository _bookCopyRepository;
+    private readonly IMemberRepository _memberRepository;
     public LoanService(
-        ILoanRepository repository
+        ILoanRepository repository,
+        IBookCopyRepository bookCopyRepository,
+        IMemberRepository memberRepository
         )
     {
         _repository = repository;
+        _bookCopyRepository = bookCopyRepository;
+        _memberRepository = memberRepository;
     }
 
     public async Task<IEnumerable<LoanResponseDto>> GetAllAsync()
@@ -35,9 +40,20 @@ public class LoanService : ILoanService
 
     public async Task<int> CreateAsync(LoanCreateDto dto)
     {
+        var memberExists = await _memberRepository.IsExistsAsync(dto.MemberId);
+        if (!memberExists)
+            throw new NotFoundException($"The member with the identifier {dto.MemberId} does not exist");
+
+        var bookCopyExists = await _bookCopyRepository.IsExistsAsync(dto.BookCopyId);
+        if (!bookCopyExists)
+            throw new NotFoundException($"The book copy with the identifier {dto.BookCopyId} does not exist");
+
         var loan = new Loan
         {
-            //CreatedAt = DateTime.UtcNow
+            MemberId = dto.MemberId,
+            BookCopyId = dto.BookCopyId,
+            BorrowedDate = dto.BorrowedDate,
+            DueDate = dto.BorrowedDate.AddDays(dto.Period) 
         };
         return await _repository.CreateAsync(loan);
     }
