@@ -5,7 +5,7 @@ public class BookCopy
 {
     public int Id { get; set; }
 
-    public string Barcode { get; set; } = string.Empty;
+    public int CopyNumber { get; set; } 
 
     public BookCopyStatus Status { get; set; } = BookCopyStatus.Available;
 

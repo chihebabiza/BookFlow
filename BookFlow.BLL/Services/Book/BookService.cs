@@ -77,15 +77,14 @@ public class BookService : IBookService
         var bookId = await _repository.CreateAsync(book);
 
         var copies = Enumerable.Range(0, dto.Quantity)
-            .Select(_ => new BookCopy
+            .Select(copyNumber => new BookCopy
             {
                 BookId = bookId,
-                Barcode = $"BK-{Guid.NewGuid():N}".ToUpper(),
+                CopyNumber = copyNumber,
                 Status = BookCopyStatus.Available,
                 CreatedAt = DateTime.UtcNow
             })
             .ToList();
-
         await _bookCopyRepository.AddRangeAsync(copies);
 
         return bookId;

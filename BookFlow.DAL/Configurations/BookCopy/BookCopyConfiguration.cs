@@ -17,7 +17,7 @@ public class BookCopyConfiguration
         builder.Property(x => x.Id)
             .ValueGeneratedOnAdd();
 
-        builder.HasIndex(x => x.Barcode)
+        builder.HasIndex(x => new { x.BookId, x.CopyNumber })
             .IsUnique();
 
         // Relationships
