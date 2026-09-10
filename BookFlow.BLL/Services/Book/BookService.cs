@@ -12,15 +12,18 @@ public class BookService : IBookService
     private readonly IBookRepository _repository;
     private readonly IAuthorRepository _authorRepository;
     private readonly ICategoryRepository _categoryRepository;
+    private readonly IBookCopyRepository _bookCopyRepository;
 
     public BookService(
         IBookRepository repository,
         IAuthorRepository authorRepository,
-        ICategoryRepository categoryRepository)
+        ICategoryRepository categoryRepository,
+        IBookCopyRepository bookCopyRepository)
     {
         _repository = repository;
         _authorRepository = authorRepository;
         _categoryRepository = categoryRepository;
+        _bookCopyRepository = bookCopyRepository;
     }
 
     public async Task<IEnumerable<BookResponseDto>> GetAllAsync()
@@ -71,7 +74,21 @@ public class BookService : IBookService
             CreatedAt = DateTime.UtcNow
         };
 
-        return await _repository.CreateAsync(book);
+        var bookId = await _repository.CreateAsync(book);
+
+        var copies = Enumerable.Range(0, dto.Quantity)
+            .Select(_ => new BookCopy
+            {
+                BookId = bookId,
+                Barcode = $"BK-{Guid.NewGuid():N}".ToUpper(),
+                Status = BookCopyStatus.Available,
+                CreatedAt = DateTime.UtcNow
+            })
+            .ToList();
+
+        await _bookCopyRepository.AddRangeAsync(copies);
+
+        return bookId;
     }
 
     public async Task<bool> UpdateAsync(BookUpdateDto dto, int id)

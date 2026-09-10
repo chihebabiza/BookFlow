@@ -15,4 +15,10 @@ public class BookCopyRepository : IBookCopyRepository
         _context = context;
     }
 
+    public async Task AddRangeAsync(IEnumerable<BookCopy> copies)
+    {
+        await _context.BookCopies.AddRangeAsync(copies);
+        await _context.SaveChangesAsync();
+    }
+
 }
