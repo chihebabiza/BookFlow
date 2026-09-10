@@ -94,7 +94,12 @@ public class BookRepository : IBookRepository
             Id = x.Author.Id,
             FirstName = x.Author.FirstName,
             LastName = x.Author.LastName,
-            CountryName = x.Author.Country.Name,
+            Country = new CountryResponseDto
+            {
+                Id = x.Author.Country.Id,
+                Code = x.Author.Country.Code,
+                Name = x.Author.Country.Name
+            },
             CreatedAt = x.Author.CreatedAt
         },
 
