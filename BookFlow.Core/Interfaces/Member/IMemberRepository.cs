@@ -19,4 +19,6 @@ public interface IMemberRepository
     Task<DeleteResult> DeleteAsync(int id);
 
     Task<bool> IsExistsAsync(int id);
+
+    Task<bool> IsActiveAsync(int id);
 }

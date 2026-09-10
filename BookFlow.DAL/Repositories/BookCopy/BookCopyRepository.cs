@@ -1,5 +1,6 @@
 using BookFlow.Core.DTOs;
 using BookFlow.Core.Entities;
+using BookFlow.Core.Enums;
 using BookFlow.Core.Interfaces;
 using BookFlow.DAL.Context;
 using Microsoft.EntityFrameworkCore;
@@ -22,10 +23,10 @@ public class BookCopyRepository : IBookCopyRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<BookCopyResponseDto>> GetCopyNumbersAsync(int bookId)
+    public async Task<IEnumerable<BookCopyResponseDto>> GetAvailableAsync(int bookId)
     {
         return await _context.BookCopies
-            .Where(x => x.BookId == bookId)
+            .Where(x => x.BookId == bookId && x.Status == BookCopyStatus.Available)
             .Select(BookCopyResponseProjection)
             .ToListAsync();
     }
@@ -34,6 +35,20 @@ public class BookCopyRepository : IBookCopyRepository
     {
         return await _context.BookCopies
             .AnyAsync(x => x.Id == id);
+    }
+
+    public async Task<BookCopy?> GetByIdForUpdateAsync(int id)
+    {
+        return await _context.BookCopies
+            .Where(x => x.Id == id)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<bool> UpdateAsync(BookCopy bookCopy)
+    {
+        _context.BookCopies.Update(bookCopy);
+        var result = await _context.SaveChangesAsync();
+        return result > 0;
     }
 
     private static readonly Expression<Func<BookCopy, BookCopyResponseDto>> BookCopyResponseProjection =

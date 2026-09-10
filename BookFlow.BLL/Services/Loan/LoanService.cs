@@ -41,21 +41,40 @@ public class LoanService : ILoanService
     public async Task<int> CreateAsync(LoanCreateDto dto)
     {
         var memberExists = await _memberRepository.IsExistsAsync(dto.MemberId);
-        if (!memberExists)
-            throw new NotFoundException($"The member with the identifier {dto.MemberId} does not exist");
 
-        var bookCopyExists = await _bookCopyRepository.IsExistsAsync(dto.BookCopyId);
-        if (!bookCopyExists)
-            throw new NotFoundException($"The book copy with the identifier {dto.BookCopyId} does not exist");
+        if (!memberExists)
+            throw new NotFoundException(
+                $"The member with the identifier {dto.MemberId} does not exist");
+
+        var memberAcative = await _memberRepository.IsActiveAsync(dto.MemberId);
+
+        if (!memberAcative)
+            throw new BadRequestException("The member is not active.");
+
+        var bookCopy = await _bookCopyRepository.GetByIdForUpdateAsync(dto.BookCopyId);
+
+        if (bookCopy == null)
+            throw new NotFoundException(
+                $"The book copy with the identifier {dto.BookCopyId} does not exist");
+
+        if (bookCopy.Status != BookCopyStatus.Available)
+            throw new BadRequestException("The book copy is not available.");
 
         var loan = new Loan
         {
             MemberId = dto.MemberId,
             BookCopyId = dto.BookCopyId,
             BorrowedDate = dto.BorrowedDate,
-            DueDate = dto.BorrowedDate.AddDays(dto.Period) 
+            DueDate = dto.BorrowedDate.AddDays(dto.Period)
         };
-        return await _repository.CreateAsync(loan);
+
+        await _repository.CreateAsync(loan);
+
+        bookCopy.Status = BookCopyStatus.Borrowed;
+
+        await _bookCopyRepository.UpdateAsync(bookCopy);
+
+        return loan.Id;
     }
 
     public async Task<bool> UpdateAsync(LoanUpdateDto dto, int id)

@@ -7,8 +7,12 @@ public interface IBookCopyRepository
 {
     Task AddRangeAsync(IEnumerable<BookCopy> copies);
 
-    Task<IEnumerable<BookCopyResponseDto>> GetCopyNumbersAsync(int bookId);
+    Task<IEnumerable<BookCopyResponseDto>> GetAvailableAsync(int bookId);
 
     Task<bool> IsExistsAsync(int id);
+
+    Task<BookCopy?> GetByIdForUpdateAsync(int id);
+
+    Task<bool> UpdateAsync(BookCopy bookCopy);
 
 }

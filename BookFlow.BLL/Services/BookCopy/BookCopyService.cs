@@ -27,7 +27,7 @@ public class BookCopyService : IBookCopyService
             throw new NotFoundException(
                 $"The book with the identifier {bookId} does not exist");
 
-        return await _repository.GetCopyNumbersAsync(bookId);
+        return await _repository.GetAvailableAsync(bookId);
     }
 
 }

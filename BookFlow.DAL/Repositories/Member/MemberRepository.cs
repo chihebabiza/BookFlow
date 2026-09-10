@@ -83,6 +83,12 @@ public class MemberRepository : IMemberRepository
             .AnyAsync(x => x.Id == id);
     }
 
+    public async Task<bool> IsActiveAsync(int id)
+    {
+        return await _context.Members
+            .AnyAsync(x => x.Id == id && x.IsActive);
+    }
+
     private static readonly Expression<Func<Member, MemberResponseDto>> MemberResponseProjection =
     x => new MemberResponseDto
     {
