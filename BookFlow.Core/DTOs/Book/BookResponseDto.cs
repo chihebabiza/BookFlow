@@ -15,4 +15,10 @@ public class BookResponseDto
     public AuthorResponseDto Author { get; set; } = null!;
 
     public CategoryResponseDto Category{ get; set; } = null!;
+
+    public int AvailableCopies { get; set; }
+    public int TotalCopies { get; set; }
+    public int BorrowedCopies { get; set; }
+    public int DamagedCopies { get; set; }
+    public int LostCopies { get; set; }
 }

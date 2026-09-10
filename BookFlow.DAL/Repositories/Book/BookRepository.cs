@@ -110,7 +110,20 @@ public class BookRepository : IBookRepository
             CreatedAt = x.Category.CreatedAt
         },
         PublishedDate = x.PublishedDate,
-        CreatedAt = x.CreatedAt
+        CreatedAt = x.CreatedAt,
+        TotalCopies = x.Copies.Count(),
+
+        AvailableCopies = x.Copies.Count(c =>
+            c.Status == BookCopyStatus.Available),
+
+        BorrowedCopies = x.Copies.Count(c =>
+            c.Status == BookCopyStatus.Borrowed),
+
+        DamagedCopies = x.Copies.Count(c =>
+            c.Status == BookCopyStatus.Damaged),
+
+        LostCopies = x.Copies.Count(c =>
+            c.Status == BookCopyStatus.Lost)
     };
 
 }
