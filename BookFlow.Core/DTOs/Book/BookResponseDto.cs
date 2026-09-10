@@ -12,7 +12,7 @@ public class BookResponseDto
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public string AuthorName { get; set; } = null!;
+    public AuthorResponseDto Author { get; set; } = null!;
 
-    public string CategoryName { get; set; } = null!;
+    public CategoryResponseDto Category{ get; set; } = null!;
 }

@@ -35,7 +35,7 @@ public class CategoryService : ICategoryService
     public async Task<int> CreateAsync(CategoryCreateDto dto)
     {
         var existingCategory = await _repository.IsExistByNameAsync(dto.Name);
-        if (!existingCategory)
+        if (existingCategory)
             throw new ConflictException($"Category with name '{dto.Name}' already exists.");
 
         var category = new Category

@@ -89,8 +89,21 @@ public class BookRepository : IBookRepository
         Id = x.Id,
         Title = x.Title,
         ISBN = x.ISBN,
-        AuthorName = x.Author.FirstName + " " + x.Author.LastName,
-        CategoryName = x.Category.Name,
+        Author = new AuthorResponseDto
+        {
+            Id = x.Author.Id,
+            FirstName = x.Author.FirstName,
+            LastName = x.Author.LastName,
+            CountryName = x.Author.Country.Name,
+            CreatedAt = x.Author.CreatedAt
+        },
+
+        Category = new CategoryResponseDto
+        {
+            Id = x.Category.Id,
+            Name = x.Category.Name,
+            CreatedAt = x.Category.CreatedAt
+        },
         PublishedDate = x.PublishedDate,
         CreatedAt = x.CreatedAt
     };
