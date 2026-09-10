@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using BookFlow.Core.Interfaces;
+using BookFlow.Core.DTOs;
 
 namespace BookFlow.Api.Controllers;
 
@@ -16,7 +17,7 @@ public class BookCopyController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    [ProducesResponseType(typeof(List<int>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<BookCopyResponseDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]

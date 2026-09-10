@@ -1,5 +1,6 @@
 using BookFlow.Core.Interfaces;
 using BookFlow.BLL.Exceptions;
+using BookFlow.Core.DTOs;
 
 namespace BookFlow.BLL.Services;
 
@@ -16,7 +17,7 @@ public class BookCopyService : IBookCopyService
         _bookRepository = bookRepository;
     }
 
-    public async Task<List<int>> GetCopyNumbersAsync(int bookId)
+    public async Task<IEnumerable<BookCopyResponseDto>> GetCopyNumbersAsync(int bookId)
     {
         if(bookId <= 0)
             throw new ArgumentException("The book identifier must be greater than zero", nameof(bookId));

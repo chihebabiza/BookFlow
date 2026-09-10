@@ -1,7 +1,9 @@
+using BookFlow.Core.DTOs;
 using BookFlow.Core.Entities;
 using BookFlow.Core.Interfaces;
 using BookFlow.DAL.Context;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace BookFlow.DAL.Repositories;
 
@@ -20,12 +22,20 @@ public class BookCopyRepository : IBookCopyRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<List<int>> GetCopyNumbersAsync(int bookId)
+    public async Task<IEnumerable<BookCopyResponseDto>> GetCopyNumbersAsync(int bookId)
     {
         return await _context.BookCopies
             .Where(x => x.BookId == bookId)
-            .Select(x => x.CopyNumber)
+            .Select(BookCopyResponseProjection)
             .ToListAsync();
     }
-   
+
+    private static readonly Expression<Func<BookCopy, BookCopyResponseDto>> BookCopyResponseProjection =
+    x => new BookCopyResponseDto
+    {
+       Id = x.Id,
+       CopyNumber = x.CopyNumber
+    };
+
+
 }
