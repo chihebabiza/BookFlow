@@ -66,6 +66,9 @@ public class LoanService : ILoanService
         if (loan is null)
             throw new NotFoundException($"The loan with the identifier {id} does not exist");
 
+        loan.ReturnedDate = dto.ReturnedDate;
+        loan.Status = LoanStatus.Returned;
+
         return await _repository.UpdateAsync(loan);
     }
 
