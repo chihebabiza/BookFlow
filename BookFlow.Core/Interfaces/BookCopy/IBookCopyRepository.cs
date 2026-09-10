@@ -6,4 +6,6 @@ public interface IBookCopyRepository
 {
     Task AddRangeAsync(IEnumerable<BookCopy> copies);
 
+    Task<List<int>> GetCopyNumbersAsync(int bookId);
+
 }
