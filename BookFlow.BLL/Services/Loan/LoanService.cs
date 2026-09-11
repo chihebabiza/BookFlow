@@ -9,17 +9,12 @@ namespace BookFlow.BLL.Services;
 
 public class LoanService : ILoanService
 {
-    private readonly ILoanRepository _repository;
-    private readonly IBookCopyRepository _bookCopyRepository;
-    private readonly IMemberRepository _memberRepository;
-    public LoanService(
-        ILoanRepository repository,
-        IBookCopyRepository bookCopyRepository,
-        IMemberRepository memberRepository
-        )
+    private readonly IUnitOfWork _unitOfWork;
+    private IMemberRepository _memberRepository;
+
+    public LoanService(IUnitOfWork unitOfWork, IMemberRepository memberRepository)
     {
-        _repository = repository;
-        _bookCopyRepository = bookCopyRepository;
+        _unitOfWork = unitOfWork;
         _memberRepository = memberRepository;
     }
 
@@ -30,14 +25,14 @@ public class LoanService : ILoanService
         if (!await _memberRepository.IsExistsAsync(memberId))
             throw new NotFoundException($"The member with the identifier {memberId} does not exist");
 
-        return await _repository.GetByMemberAsync(memberId);
+        return await _unitOfWork.Loans.GetByMemberAsync(memberId);
     }
 
     public async Task<LoanResponseDto> GetByIdAsync(int id)
     {
         ValidationHelper.ValidateId(id);
 
-        var loan = await _repository.GetByIdAsync(id);
+        var loan = await _unitOfWork.Loans.GetByIdAsync(id);
         if (loan is null)
             throw new NotFoundException($"The loan with the identifier {id} does not exist");
         return loan;
@@ -56,7 +51,7 @@ public class LoanService : ILoanService
         if (!memberAcative)
             throw new BadRequestException("The member is not active.");
 
-        var bookCopy = await _bookCopyRepository.GetByIdForUpdateAsync(dto.BookCopyId);
+        var bookCopy = await _unitOfWork.BookCopies.GetByIdForUpdateAsync(dto.BookCopyId);
 
         if (bookCopy == null)
             throw new NotFoundException(
@@ -73,11 +68,12 @@ public class LoanService : ILoanService
             DueDate = dto.BorrowedDate.AddDays(dto.Period)
         };
 
-        await _repository.CreateAsync(loan);
-
         bookCopy.Status = BookCopyStatus.Borrowed;
 
-        await _bookCopyRepository.UpdateAsync(bookCopy);
+        _unitOfWork.Loans.Create(loan);
+        _unitOfWork.BookCopies.Update(bookCopy);
+
+        await _unitOfWork.CompleteAsync();
 
         return loan.Id;
     }
@@ -86,7 +82,7 @@ public class LoanService : ILoanService
     {
         ValidationHelper.ValidateId(id);
 
-        var loan = await _repository.GetByIdForUpdateAsync(id);
+        var loan = await _unitOfWork.Loans.GetByIdForUpdateAsync(id);
 
         if (loan is null)
             throw new NotFoundException(
@@ -95,7 +91,7 @@ public class LoanService : ILoanService
         if (loan.Status == LoanStatus.Returned)
             throw new BadRequestException("This loan has already been returned.");
 
-        var bookCopy = await _bookCopyRepository
+        var bookCopy = await _unitOfWork.BookCopies
             .GetByIdForUpdateAsync(loan.BookCopyId);
 
         if (bookCopy is null)
@@ -104,9 +100,12 @@ public class LoanService : ILoanService
 
         loan.ReturnedDate = dto.ReturnedDate;
         loan.Status = LoanStatus.Returned;
-        await _repository.UpdateAsync(loan);
         bookCopy.Status = BookCopyStatus.Available;
-        await _bookCopyRepository.UpdateAsync(bookCopy);
+
+        _unitOfWork.Loans.Update(loan);
+        _unitOfWork.BookCopies.Update(bookCopy);
+
+        await _unitOfWork.CompleteAsync();
         return true;
     }
 
@@ -114,11 +113,11 @@ public class LoanService : ILoanService
     {
         ValidationHelper.ValidateId(id);
 
-        var exist = await _repository.IsExistsAsync(id);
+        var exist = await _unitOfWork.Loans.IsExistsAsync(id);
         if (!exist)
             throw new NotFoundException($"The loan with the identifier {id} does not exist");
 
-        var result = await _repository.DeleteAsync(id);
+        var result = await _unitOfWork.Loans.DeleteAsync(id);
         return result switch
         {
             DeleteResult.Success => true,
