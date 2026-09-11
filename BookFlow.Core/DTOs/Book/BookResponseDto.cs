@@ -1,3 +1,4 @@
+using BookFlow.Core.Entities;
 namespace BookFlow.Core.DTOs;
 
 public class BookResponseDto
@@ -12,9 +13,9 @@ public class BookResponseDto
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public AuthorResponseDto Author { get; set; } = null!;
+    public Author Author { get; set; } = null!;
 
-    public CategoryResponseDto Category{ get; set; } = null!;
+    public Category Category{ get; set; } = null!;
 
     public int AvailableCopies { get; set; }
     public int TotalCopies { get; set; }

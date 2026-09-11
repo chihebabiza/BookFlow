@@ -89,39 +89,17 @@ public class BookRepository : IBookRepository
         Id = x.Id,
         Title = x.Title,
         ISBN = x.ISBN,
-        Author = new AuthorResponseDto
-        {
-            Id = x.Author.Id,
-            FirstName = x.Author.FirstName,
-            LastName = x.Author.LastName,
-            Country = new CountryResponseDto
-            {
-                Id = x.Author.Country.Id,
-                Code = x.Author.Country.Code,
-                Name = x.Author.Country.Name
-            },
-            CreatedAt = x.Author.CreatedAt
-        },
-
-        Category = new CategoryResponseDto
-        {
-            Id = x.Category.Id,
-            Name = x.Category.Name,
-            CreatedAt = x.Category.CreatedAt
-        },
+        Author = x.Author,
+        Category = x.Category,
         PublishedDate = x.PublishedDate,
         CreatedAt = x.CreatedAt,
         TotalCopies = x.Copies.Count(),
-
         AvailableCopies = x.Copies.Count(c =>
             c.Status == BookCopyStatus.Available),
-
         BorrowedCopies = x.Copies.Count(c =>
             c.Status == BookCopyStatus.Borrowed),
-
         DamagedCopies = x.Copies.Count(c =>
             c.Status == BookCopyStatus.Damaged),
-
         LostCopies = x.Copies.Count(c =>
             c.Status == BookCopyStatus.Lost)
     };

@@ -1,14 +1,16 @@
 using BookFlow.Core.Enums;
-
+using BookFlow.Core.Entities;
 namespace BookFlow.Core.DTOs;
 
 public class LoanResponseDto
 {
     public int Id { get; set; }
 
-    public MemberResponseDto Member { get; set; } = null!;
+    public Member Member { get; set; } = null!;
 
-    public BookCopyResponseDto BookCopy { get; set; } = null!;
+    public BookCopy BookCopy { get; set; } = null!;
+
+    public Book Book { get; set; } = null!;
 
     public DateTime BorrowedDate { get; set; }
 

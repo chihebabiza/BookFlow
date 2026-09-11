@@ -84,20 +84,9 @@ public class LoanRepository : ILoanRepository
     x => new LoanResponseDto
     {
         Id = x.Id,
-        BookCopy = new BookCopyResponseDto
-        {
-            Id = x.BookCopy.Id,
-            CopyNumber = x.BookCopy.CopyNumber,
-        },
-        Member = new MemberResponseDto
-        {
-            Id = x.Member.Id,
-            FirstName = x.Member.FirstName,
-            LastName = x.Member.LastName,
-            Phone = x.Member.Phone,
-            CreatedAt = x.Member.CreatedAt,
-            IsActive = x.Member.IsActive
-        },
+        BookCopy = x.BookCopy,
+        Book = x.BookCopy.Book,
+        Member = x.Member,
         BorrowedDate = x.BorrowedDate,
         DueDate = x.DueDate,
         ReturnedDate = x.ReturnedDate,

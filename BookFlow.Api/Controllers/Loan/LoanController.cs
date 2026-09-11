@@ -16,10 +16,10 @@ public class LoanController : ControllerBase
         _service = service;
     }
 
-    // GET: api/Loans
-    [HttpGet("{memberId}")]
+    // GET : api/member/1
+    [HttpGet("member/{memberId:int}")]
     [ProducesResponseType(typeof(IEnumerable<LoanResponseDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<LoanResponseDto>>> GetByMember(int memberId)
     {
         var loans = await _service.GetByMemberAsync(memberId);

@@ -89,12 +89,7 @@ public class AuthorRepository : IAuthorRepository
         Id = x.Id,
         FirstName = x.FirstName,
         LastName = x.LastName,
-        Country = new CountryResponseDto
-        {
-            Id = x.Country.Id,
-            Code = x.Country.Code,
-            Name = x.Country.Name
-        },
+        Country = x.Country,
         CreatedAt = x.CreatedAt
     };
 
