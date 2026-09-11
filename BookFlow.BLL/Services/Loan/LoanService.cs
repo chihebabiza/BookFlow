@@ -23,9 +23,14 @@ public class LoanService : ILoanService
         _memberRepository = memberRepository;
     }
 
-    public async Task<IEnumerable<LoanResponseDto>> GetAllAsync()
+    public async Task<IEnumerable<LoanResponseDto>> GetByMemberAsync(int memberId)
     {
-        return await _repository.GetAllAsync();
+        ValidationHelper.ValidateId(memberId);
+
+        if (!await _memberRepository.IsExistsAsync(memberId))
+            throw new NotFoundException($"The member with the identifier {memberId} does not exist");
+
+        return await _repository.GetByMemberAsync(memberId);
     }
 
     public async Task<LoanResponseDto> GetByIdAsync(int id)
@@ -82,13 +87,27 @@ public class LoanService : ILoanService
         ValidationHelper.ValidateId(id);
 
         var loan = await _repository.GetByIdForUpdateAsync(id);
+
         if (loan is null)
-            throw new NotFoundException($"The loan with the identifier {id} does not exist");
+            throw new NotFoundException(
+                $"The loan with the identifier {id} does not exist");
+
+        if (loan.Status == LoanStatus.Returned)
+            throw new BadRequestException("This loan has already been returned.");
+
+        var bookCopy = await _bookCopyRepository
+            .GetByIdForUpdateAsync(loan.BookCopyId);
+
+        if (bookCopy is null)
+            throw new NotFoundException(
+                $"The book copy with the identifier {loan.BookCopyId} does not exist");
 
         loan.ReturnedDate = dto.ReturnedDate;
         loan.Status = LoanStatus.Returned;
-
-        return await _repository.UpdateAsync(loan);
+        await _repository.UpdateAsync(loan);
+        bookCopy.Status = BookCopyStatus.Available;
+        await _bookCopyRepository.UpdateAsync(bookCopy);
+        return true;
     }
 
     public async Task<bool> DeleteAsync(int id)

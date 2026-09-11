@@ -18,10 +18,11 @@ public class LoanRepository : ILoanRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<LoanResponseDto>> GetAllAsync()
+    public async Task<IEnumerable<LoanResponseDto>> GetByMemberAsync(int memberId)
     {
         return await _context.Loans
             .AsNoTracking()
+            .Where(x=>x.MemberId == memberId)
             .Select(LoanResponseProjection)
             .OrderBy(x => x.Id)
             .ToListAsync();
@@ -45,18 +46,14 @@ public class LoanRepository : ILoanRepository
         return author;
     }
 
-    public async Task<int> CreateAsync(Loan author)
+    public void Create(Loan author)
     {
         _context.Loans.Add(author);
-        await _context.SaveChangesAsync();
-        return author.Id;
     }
 
-    public async Task<bool> UpdateAsync(Loan author)
+    public void Update(Loan author)
     {
         _context.Loans.Update(author);
-        var affectedRows = await _context.SaveChangesAsync();
-        return affectedRows > 0;
     }
 
     public async Task<DeleteResult> DeleteAsync(int id)
@@ -87,7 +84,24 @@ public class LoanRepository : ILoanRepository
     x => new LoanResponseDto
     {
         Id = x.Id,
-        //CreatedAt = x.CreatedAt
+        BookCopy = new BookCopyResponseDto
+        {
+            Id = x.BookCopy.Id,
+            CopyNumber = x.BookCopy.CopyNumber,
+        },
+        Member = new MemberResponseDto
+        {
+            Id = x.Member.Id,
+            FirstName = x.Member.FirstName,
+            LastName = x.Member.LastName,
+            Phone = x.Member.Phone,
+            CreatedAt = x.Member.CreatedAt,
+            IsActive = x.Member.IsActive
+        },
+        BorrowedDate = x.BorrowedDate,
+        DueDate = x.DueDate,
+        ReturnedDate = x.ReturnedDate,
+        Status = x.Status,
     };
 
 }

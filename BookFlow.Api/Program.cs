@@ -62,6 +62,9 @@ builder.Services.AddScoped<ILoanService, LoanService>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<IMemberService, MemberService>();
 
+// Unit of Work
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

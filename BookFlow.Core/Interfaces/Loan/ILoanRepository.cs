@@ -6,15 +6,15 @@ namespace BookFlow.Core.Interfaces;
 
 public interface ILoanRepository
 {
-    Task<IEnumerable<LoanResponseDto>> GetAllAsync();
+    Task<IEnumerable<LoanResponseDto>> GetByMemberAsync(int memberId);
 
     Task<LoanResponseDto?> GetByIdAsync(int id);
 
     Task<Loan?> GetByIdForUpdateAsync(int id);
 
-    Task<int> CreateAsync(Loan book);
+    void Create(Loan book);
 
-    Task<bool> UpdateAsync(Loan book);
+    void Update(Loan book);
 
     Task<DeleteResult> DeleteAsync(int id);
 

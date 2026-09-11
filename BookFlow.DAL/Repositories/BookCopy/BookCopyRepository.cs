@@ -17,12 +17,6 @@ public class BookCopyRepository : IBookCopyRepository
         _context = context;
     }
 
-    public async Task AddRangeAsync(IEnumerable<BookCopy> copies)
-    {
-        await _context.BookCopies.AddRangeAsync(copies);
-        await _context.SaveChangesAsync();
-    }
-
     public async Task<IEnumerable<BookCopyResponseDto>> GetAvailableAsync(int bookId)
     {
         return await _context.BookCopies
@@ -31,24 +25,27 @@ public class BookCopyRepository : IBookCopyRepository
             .ToListAsync();
     }
 
-    public async Task<bool> IsExistsAsync(int id)
-    {
-        return await _context.BookCopies
-            .AnyAsync(x => x.Id == id);
-    }
-
     public async Task<BookCopy?> GetByIdForUpdateAsync(int id)
     {
         return await _context.BookCopies
             .Where(x => x.Id == id)
             .FirstOrDefaultAsync();
     }
+    public async Task AddRangeAsync(IEnumerable<BookCopy> copies)
+    {
+        await _context.BookCopies.AddRangeAsync(copies);
+        await _context.SaveChangesAsync();
+    }
 
-    public async Task<bool> UpdateAsync(BookCopy bookCopy)
+    public void Update(BookCopy bookCopy)
     {
         _context.BookCopies.Update(bookCopy);
-        var result = await _context.SaveChangesAsync();
-        return result > 0;
+    }
+
+    public async Task<bool> IsExistsAsync(int id)
+    {
+        return await _context.BookCopies
+            .AnyAsync(x => x.Id == id);
     }
 
     private static readonly Expression<Func<BookCopy, BookCopyResponseDto>> BookCopyResponseProjection =

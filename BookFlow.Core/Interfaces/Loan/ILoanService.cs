@@ -3,7 +3,7 @@ namespace BookFlow.Core.Interfaces;
 
 public interface ILoanService
 {
-    Task<IEnumerable<LoanResponseDto>> GetAllAsync();
+    Task<IEnumerable<LoanResponseDto>> GetByMemberAsync(int memberId);
 
     Task<LoanResponseDto> GetByIdAsync(int id);
 
