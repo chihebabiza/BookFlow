@@ -17,12 +17,12 @@ public class LoanController : ControllerBase
     }
 
     // GET: api/Loans
-    [HttpGet]
+    [HttpGet("{memberId}")]
     [ProducesResponseType(typeof(IEnumerable<LoanResponseDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<LoanResponseDto>>> GetAll()
+    public async Task<ActionResult<IEnumerable<LoanResponseDto>>> GetByMember(int memberId)
     {
-        var loans = await _service.GetAllAsync();
+        var loans = await _service.GetByMemberAsync(memberId);
         return Ok(loans);
     }
 
