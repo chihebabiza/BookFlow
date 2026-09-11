@@ -49,7 +49,7 @@ public class MemberController : ControllerBase
     public async Task<IActionResult> GetById(int id)
     {
         var member = await _service.GetByIdAsync(id);
-        return Ok();
+        return Ok(member);
     }
 
     // PUT: api/Members/5
