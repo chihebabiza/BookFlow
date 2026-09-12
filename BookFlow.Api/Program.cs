@@ -65,6 +65,11 @@ builder.Services.AddScoped<IMemberService, MemberService>();
 // Unit of Work
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+// User
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
