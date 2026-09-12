@@ -1,4 +1,4 @@
-﻿namespace BookFlow.Core.DTOs.User;
+﻿namespace BookFlow.Core.DTOs;
     public class UserLoginDto
     {
         public string Email { get; set; } = string.Empty;

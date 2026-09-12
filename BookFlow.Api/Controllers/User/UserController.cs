@@ -82,4 +82,15 @@ public class UserController : ControllerBase
         return NoContent();
     }
 
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(UserLoginDto dto)
+    {
+        var token = await _service.LoginAsync(dto);
+
+        return Ok(new
+        {
+            token
+        });
+    }
+
 }

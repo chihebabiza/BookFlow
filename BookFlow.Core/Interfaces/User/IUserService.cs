@@ -1,4 +1,5 @@
 using BookFlow.Core.DTOs;
+using BookFlow.Core.DTOs.User;
 namespace BookFlow.Core.Interfaces;
 
 public interface IUserService
@@ -12,4 +13,6 @@ public interface IUserService
     Task<bool> UpdateAsync(UserUpdateDto author, int id);
 
     Task<bool> DeleteAsync(int id);
+
+    Task<string> LoginAsync(UserLoginDto dto);
 }
