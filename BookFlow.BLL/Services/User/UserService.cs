@@ -1,7 +1,6 @@
 using BookFlow.BLL.Exceptions;
 using BookFlow.BLL.Helpers;
 using BookFlow.Core.DTOs;
-using BookFlow.Core.DTOs.User;
 using BookFlow.Core.Entities;
 using BookFlow.Core.Enums;
 using BookFlow.Core.Interfaces;

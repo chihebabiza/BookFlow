@@ -1,9 +1,12 @@
-using Microsoft.EntityFrameworkCore;
-using BookFlow.DAL.Context;
 using BookFlow.API.Middleware;
-using BookFlow.Core.Interfaces;
-using BookFlow.DAL.Repositories;
 using BookFlow.BLL.Services;
+using BookFlow.Core.Interfaces;
+using BookFlow.DAL.Context;
+using BookFlow.DAL.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +21,27 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Controllers
 builder.Services.AddControllers();
+
+// Authentication 
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = "StudentApi",
+            ValidAudience = "StudentApiUsers",
+
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(
+                    "THIS_IS_A_VERY_SECRET_KEY_123456"))
+        };
+    });
 
 // Cors
 builder.Services.AddCors(options =>
@@ -114,6 +138,8 @@ app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 
 app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
