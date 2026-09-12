@@ -1,5 +1,4 @@
 using BookFlow.Core.DTOs;
-using BookFlow.Core.DTOs.User;
 namespace BookFlow.Core.Interfaces;
 
 public interface IUserService
