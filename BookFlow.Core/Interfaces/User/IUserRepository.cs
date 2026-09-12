@@ -19,4 +19,6 @@ public interface IUserRepository
     Task<DeleteResult> DeleteAsync(int id);
 
     Task<bool> IsExistsAsync(int id);
+
+    Task<UserResponseDto?> GetByEmailAsync(string email);
 }

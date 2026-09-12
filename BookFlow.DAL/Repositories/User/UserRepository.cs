@@ -83,11 +83,27 @@ public class UserRepository : IUserRepository
             .AnyAsync(x => x.Id == id);
     }
 
+    public async Task<UserResponseDto?> GetByEmailAsync(string email)
+    {
+        var author = await _context.Users
+            .AsNoTracking()
+            .Where(x => x.Email == email)
+            .Select(UserResponseProjection)
+            .FirstOrDefaultAsync();
+        return author;
+    }
     private static readonly Expression<Func<User, UserResponseDto>> UserResponseProjection =
     x => new UserResponseDto
     {
         Id = x.Id,
-        //CreatedAt = x.CreatedAt
+        FirstName = x.FirstName,
+        LastName = x.LastName,
+        Email = x.Email,
+        PasswordHash = x.PasswordHash,
+        IsActive = x.IsActive,
+        Role = x.Role,
+        UpdatedAt = x.UpdatedAt,
+        CreatedAt = x.CreatedAt
     };
 
 }

@@ -1,9 +1,14 @@
 using BookFlow.BLL.Exceptions;
+using BookFlow.BLL.Helpers;
 using BookFlow.Core.DTOs;
+using BookFlow.Core.DTOs.User;
+using BookFlow.Core.Entities;
 using BookFlow.Core.Enums;
 using BookFlow.Core.Interfaces;
-using BookFlow.Core.Entities;
-using BookFlow.BLL.Helpers;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace BookFlow.BLL.Services;
 
@@ -86,5 +91,57 @@ public class UserService : IUserService
             _ => throw new Exception(
                 "An unexpected error occurred while deleting the user")
         };
+    }
+
+    public async Task<string> LoginAsync(UserLoginDto user)
+    {
+        var loggedInUser = await _repository.GetByEmailAsync(user.Email);
+
+        if (loggedInUser is null)
+            throw new UnauthorizedAccessException("Invalid credentials");
+
+        if (!loggedInUser.IsActive)
+            throw new UnauthorizedAccessException("This account is inactive");
+
+        bool isValidPassword =
+            BCrypt.Net.BCrypt.Verify(
+                user.PasswordHash,
+                loggedInUser.PasswordHash);
+
+        if (!isValidPassword)
+            throw new UnauthorizedAccessException("Invalid credentials");
+
+        var claims = new[]
+        {
+        new Claim(
+            ClaimTypes.NameIdentifier,
+            loggedInUser.Id.ToString()),
+
+        new Claim(
+            ClaimTypes.Email,
+            loggedInUser.Email),
+
+        new Claim(
+            ClaimTypes.Role,
+            loggedInUser.Role.ToString())
+    };
+
+        var key = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(
+                "THIS_IS_A_VERY_SECRET_KEY_123456"));
+
+        var creds = new SigningCredentials(
+            key,
+            SecurityAlgorithms.HmacSha256);
+
+        var token = new JwtSecurityToken(
+            issuer: "StudentApi",
+            audience: "StudentApiUsers",
+            claims: claims,
+            expires: DateTime.UtcNow.AddMinutes(30),
+            signingCredentials: creds
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }
