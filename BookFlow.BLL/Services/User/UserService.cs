@@ -37,7 +37,11 @@ public class UserService : IUserService
     {
         var user = new User
         {
-            CreatedAt = DateTime.UtcNow
+            FirstName = dto.FirstName,
+            LastName = dto.LastName,
+            Email = dto.Email,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.PasswordHash),
+            Role = dto.Role,
         };
         return await _repository.CreateAsync(user);
     }
@@ -49,6 +53,13 @@ public class UserService : IUserService
         var user = await _repository.GetByIdForUpdateAsync(id);
         if (user is null)
             throw new NotFoundException($"The user with the identifier {id} does not exist");
+
+        user.FirstName = dto.FirstName;
+        user.LastName = dto.LastName;
+        user.Email = dto.Email;
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.PasswordHash);
+        user.Role = dto.Role;
+        user.IsActive = dto.IsActive;
 
         return await _repository.UpdateAsync(user);
     }
